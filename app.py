@@ -23,7 +23,7 @@ def load_data():
                 saved_data = json.load(file)
                 
                 # Load table data and locked cells separately
-                table_data = pd.DataFrame(saved_data.get("table_data", []))
+                table_data = pd.DataFrame(saved_data)
                 st.session_state['locked_cells'] = saved_data.get("locked_cells", {})
                 return table_data
         except json.JSONDecodeError:
@@ -42,10 +42,8 @@ def load_data():
 # Function to save data and locked cells to JSON file
 def save_data(data):
     with open(data_file_path, "w") as file:
-        json.dump({
-            "table_data": data.to_dict(orient="records"),
-            "locked_cells": st.session_state['locked_cells']
-        }, file)
+      json.dump(data.to_dict(orient="records"), file)
+
 
 
 # Load the table data when the app starts
