@@ -49,10 +49,8 @@ st.session_state['table_data'] = load_data()
 def lock_prefilled_cells():
     for idx, data in st.session_state['table_data'].iterrows():
         for col, value in data.items():
-            # Convert value to string and check for non-empty values
-            if (idx, col) not in st.session_state['locked_cells'] and str(value).strip():
+            if (idx, col) not in st.session_state['locked_cells'] and value.strip():
                 st.session_state['locked_cells'][(idx, col)] = value
-
 
 # Lock pre-filled cells when the app starts
 lock_prefilled_cells()
