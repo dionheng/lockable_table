@@ -1,26 +1,44 @@
 import streamlit as st
 import pandas as pd
-from datetime import datetime
+import os
 
 st.title("Lockable Table")
+
+# Define the path to the CSV file where the table data will be stored
+data_file_path = "table_data.csv"
 
 # Initialize session state if not already
 if 'locked_cells' not in st.session_state:
     st.session_state['locked_cells'] = {}
 
-if 'table_data' not in st.session_state:
-    st.session_state['table_data'] = pd.DataFrame({
-        'Number': ["1", "2", "3", "4", "5", "6", "7", "8", "9"],
-        'OMAT No.': ["OMat 4-70", "OMat 1001A", "OMat 4-51", "OMat 8-121", "OMat 150", "OMat 4-43", "OMat 4/71", "OMat 4/74", "OMat 4/76"],
-        'Description': ["Air Dry, Molybdenum\nDisulphide\nDry Film Lubricant (1L)", "Plus gas, Dry Film Lubricant (1L)\nEnamel (1L)", "Molykote\nD321R", "Loctite 641\nBearing Fit", "Acetone", "Molydisulphide\nDry Film Lubricant", "Rapid Re-lube Kit T700", "Rapid Re-lube Kit T800", "Rapid Re-lube Kit T800"],
-        'Minimum Stock Level\nMaximum Allowable\nVolume': ["10 Bottles (0.125 litre/bottle)\n20 Bottles", "", "", "", "", "", "", "", ""],
-        'Batch No.': ["", "", "", "", "", "", "", "", ""],
-        'Expiry Date\n(DD/MM/YYYY)': ["", "", "", "", "", "", "", "", ""],
-        'Quantity\n(Week 1)': ["", "", "", "", "", "", "", "", ""],
-        'Quantity\n(Week 2)': ["", "", "", "", "", "", "", "", ""],
-        'Quantity\n(Week 3)': ["", "", "", "", "", "", "", "", ""],
-        'Quantity\n(Week 4)': ["", "", "", "", "", "", "", "", ""],
-    })
+if 'is_locked' not in st.session_state:
+    st.session_state['is_locked'] = False
+
+# Function to load data from CSV file
+def load_data():
+    if os.path.exists(data_file_path):
+        return pd.read_csv(data_file_path)
+    else:
+        # Default data if the file doesn't exist
+        return pd.DataFrame({
+            'Number': ["1", "2", "3", "4", "5", "6", "7", "8", "9"],
+            'OMAT No.': ["OMat 4-70", "OMat 1001A", "OMat 4-51", "OMat 8-121", "OMat 150", "OMat 4-43", "OMat 4/71", "OMat 4/74", "OMat 4/76"],
+            'Description': ["Air Dry, Molybdenum\nDisulphide\nDry Film Lubricant (1L)", "Plus gas, Dry Film Lubricant (1L)\nEnamel (1L)", "Molykote\nD321R", "Loctite 641\nBearing Fit", "Acetone", "Molydisulphide\nDry Film Lubricant", "Rapid Re-lube Kit T700", "Rapid Re-lube Kit T800", "Rapid Re-lube Kit T800"],
+            'Minimum Stock Level\nMaximum Allowable\nVolume': ["10 Bottles (0.125 litre/bottle)\n20 Bottles", "", "", "", "", "", "", "", ""],
+            'Batch No.': ["", "", "", "", "", "", "", "", ""],
+            'Expiry Date\n(DD/MM/YYYY)': ["", "", "", "", "", "", "", "", ""],
+            'Quantity\n(Week 1)': ["", "", "", "", "", "", "", "", ""],
+            'Quantity\n(Week 2)': ["", "", "", "", "", "", "", "", ""],
+            'Quantity\n(Week 3)': ["", "", "", "", "", "", "", "", ""],
+            'Quantity\n(Week 4)': ["", "", "", "", "", "", "", "", ""],
+        })
+
+# Function to save data to CSV file
+def save_data(data):
+    data.to_csv(data_file_path, index=False)
+
+# Load the table data when the app starts
+st.session_state['table_data'] = load_data()
 
 # Function to lock pre-filled cells
 def lock_prefilled_cells():
@@ -49,7 +67,7 @@ def update_table_data(new_data):
 locked_table_data = st.session_state['table_data'].copy()
 
 # Render the table only if the table is not locked
-if 'is_locked' not in st.session_state or not st.session_state['is_locked']:
+if not st.session_state['is_locked']:
     # If the table is not locked, render it as editable
     edited_data = st.data_editor(
         locked_table_data.to_dict(orient='records'),
@@ -57,6 +75,7 @@ if 'is_locked' not in st.session_state or not st.session_state['is_locked']:
     # Update the table data in session state when edited
     if edited_data is not None:
         update_table_data(edited_data)
+        save_data(st.session_state['table_data'])  # Save updated data to file
 
 else:
     # If the table is locked, display it as read-only (no editing allowed)
@@ -67,3 +86,4 @@ if st.button("Lock Table Values"):
     lock_cells()  # Lock the cells
     st.session_state['is_locked'] = True  # Mark the table as locked
     st.success("Table values locked successfully! The values cannot be edited now.")
+    save_data(st.session_state['table_data'])  # Save data after locking
