@@ -3,7 +3,6 @@ import pandas as pd
 import json
 import os
 
-
 st.title("Lockable Table")
 
 # Define the path to the JSON file where the table data will be stored
@@ -62,6 +61,11 @@ def lock_cells():
             if (idx, col) not in st.session_state['locked_cells'] and value.strip():
                 st.session_state['locked_cells'][(idx, col)] = value
 
+# Function to unlock the table
+def unlock_table():
+    st.session_state['is_locked'] = False
+    st.session_state['locked_cells'] = {}  # Clear locked cells if needed
+
 # Function to update table data
 def update_table_data(new_data):
     for idx, record in enumerate(new_data):
@@ -71,7 +75,7 @@ def update_table_data(new_data):
 # Create a copy of the table data and mark the locked cells
 locked_table_data = st.session_state['table_data'].copy()
 
-# Render the table only if the table is not locked
+# Render the table
 if not st.session_state['is_locked']:
     # If the table is not locked, render it as editable
     edited_data = st.data_editor(
@@ -81,7 +85,6 @@ if not st.session_state['is_locked']:
     if edited_data is not None:
         update_table_data(edited_data)
         save_data(st.session_state['table_data'])  # Save updated data to file
-
 else:
     # If the table is locked, display it as read-only (no editing allowed)
     st.dataframe(locked_table_data)  # This will display a static table (read-only)
@@ -92,3 +95,8 @@ if st.button("Lock Table Values"):
     st.session_state['is_locked'] = True  # Mark the table as locked
     st.success("Table values locked successfully! The values cannot be edited now.")
     save_data(st.session_state['table_data'])  # Save data after locking
+
+# Button to unlock the table
+if st.button("Unlock Table Values"):
+    unlock_table()
+    st.success("Table unlocked! You can now edit the values again.")
