@@ -49,17 +49,8 @@ if 'is_locked' not in st.session_state or not st.session_state['is_locked']:
         locked_table_data.to_dict(orient='records'),
     )
 else:
-    # If the table is locked, disable the editing
-    # Set locked cells to read-only
-    column_config = {
-        col: {"disabled": True} for _, col in st.session_state['locked_cells'].keys()
-    }
-    
-    # Disable editing for all cells once the table is locked
-    st.data_editor(
-        locked_table_data.to_dict(orient='records'),
-        column_config=column_config
-    )
+    # If the table is locked, display it as read-only (no editing allowed)
+    st.dataframe(locked_table_data)  # This will display a static table (read-only)
 
 if st.button("Lock Table Values"):
     lock_cells()  # Lock the cells
