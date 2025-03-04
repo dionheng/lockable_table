@@ -39,6 +39,12 @@ def lock_cells():
             if (idx, col) not in st.session_state['locked_cells'] and value.strip():
                 st.session_state['locked_cells'][(idx, col)] = value
 
+# Function to update table data
+def update_table_data(new_data):
+    for idx, record in enumerate(new_data):
+        for col, value in record.items():
+            st.session_state['table_data'].at[idx, col] = value
+
 # Create a copy of the table data and mark the locked cells
 locked_table_data = st.session_state['table_data'].copy()
 
@@ -48,10 +54,15 @@ if 'is_locked' not in st.session_state or not st.session_state['is_locked']:
     edited_data = st.data_editor(
         locked_table_data.to_dict(orient='records'),
     )
+    # Update the table data in session state when edited
+    if edited_data is not None:
+        update_table_data(edited_data)
+
 else:
     # If the table is locked, display it as read-only (no editing allowed)
     st.dataframe(locked_table_data)  # This will display a static table (read-only)
 
+# Button to lock the table values
 if st.button("Lock Table Values"):
     lock_cells()  # Lock the cells
     st.session_state['is_locked'] = True  # Mark the table as locked
