@@ -56,8 +56,13 @@ def export_to_google_sheets(sheet_url):
     except Exception as e:
         st.error(f"Failed to export data to Google Sheets: {e}")
 
-# Render the table
-edited_df = st.data_editor(st.session_state['table_data'], disabled=list(st.session_state['locked_cells'].keys()))
+# Render the table with dynamic height and width
+st.data_editor(
+    st.session_state['table_data'], 
+    disabled=list(st.session_state['locked_cells'].keys()),
+    height=(len(st.session_state['table_data']) * 35) + 50,  # Dynamic height
+    use_container_width=True  # Dynamic width
+)
 
 st.session_state['table_data'] = edited_df
 
