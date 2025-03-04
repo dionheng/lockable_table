@@ -91,3 +91,4 @@ if st.button("Lock Table Values"):
     st.session_state['is_locked'] = True  # Mark the table as locked
     st.success("Table values locked successfully! The values cannot be edited now.")
     save_data(st.session_state['table_data'])  # Save data after locking
+print(os.getcwd())
