@@ -42,16 +42,17 @@ def lock_cells():
 # Create a copy of the table data and mark the locked cells
 locked_table_data = st.session_state['table_data'].copy()
 
-# Mark locked cells in the dataframe
-for (idx, col) in st.session_state['locked_cells'].keys():
-    locked_table_data.at[idx, col] = f"Locked: {st.session_state['locked_cells'][(idx, col)]}"
-
-# Render the table with dynamic height and width and mark the locked cells as read-only
-st.data_editor(
-    locked_table_data.to_dict(orient='records'),
-    disabled_columns={col: True for _, col in st.session_state['locked_cells'].keys()},
-)
+# Render the table only if the table is not locked
+if 'is_locked' not in st.session_state or not st.session_state['is_locked']:
+    # If the table is not locked, render it as editable
+    edited_data = st.data_editor(
+        locked_table_data.to_dict(orient='records'),
+    )
+else:
+    # If the table is locked, disable the editing
+    st.dataframe(locked_table_data)  # Display the table as it is, without allowing editing
 
 if st.button("Lock Table Values"):
-    lock_cells()
+    lock_cells()  # Lock the cells
+    st.session_state['is_locked'] = True  # Mark the table as locked
     st.success("Table values locked successfully! The values cannot be edited now.")
