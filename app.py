@@ -88,7 +88,7 @@ st.data_editor(
 # Google Sheet URL input
 google_sheet_url = st.text_input("Enter your Google Sheet URL")
 
-if st.button("Lock Filled Cells and Export to Google Sheets"):
+if st.button("Submit"):
     lock_cells()
     if google_sheet_url.strip():
         export_to_google_sheets(google_sheet_url)
