@@ -5,7 +5,7 @@ from datetime import datetime
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 
-st.title("Lockable Table with Google Sheets Export")
+st.title("Fan Blade Cell - Flammable Omats Weekly Checklist")
 
 # Initialize session state if not already
 if 'locked_cells' not in st.session_state:
@@ -13,9 +13,16 @@ if 'locked_cells' not in st.session_state:
 
 if 'table_data' not in st.session_state:
     st.session_state['table_data'] = pd.DataFrame({
-        'Column 1': ["", "", ""],
-        'Column 2': ["", "", ""],
-        'Column 3': ["", "", ""]
+        'Number': ["1", "2", "3", "4", "5", "6", "7", "8", "9"],
+        'OMAT No.': ["OMat 4-70", "OMat 1001A", "OMat 4-51", "OMat 8-121", "OMat 150", "OMat 4-43", "OMat 4/71", "OMat 4/74", "OMat 4/76"],
+        'Description': ["", "", "", "", "", "", "", "", ""],
+        'Minimum Stock Level Maximum Allowable Volume': ["", "", ""],
+        'Batch No.': ["", "", "", "", "", "", "", "", ""],
+        'Expiry Date (DD/MM/YYYY)': ["", "", "", "", "", "", "", "", ""],
+        'Quantity (Week 1)': ["", "", "", "", "", "", "", "", ""],
+        'Quantity (Week 2)': ["", "", "", "", "", "", "", "", ""],
+        'Quantity (Week 3)': ["", "", "", "", "", "", "", "", ""],
+        'Quantity (Week 4)': ["", "", "", "", "", "", "", "", ""],
     })
 
 if 'timestamps' not in st.session_state:
