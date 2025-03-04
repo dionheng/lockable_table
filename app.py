@@ -32,17 +32,24 @@ def lock_prefilled_cells():
 # Lock pre-filled cells when the app starts
 lock_prefilled_cells()
 
-# Function to lock cells and timestamp
+# Function to lock cells
 def lock_cells():
     for idx, data in st.session_state['table_data'].iterrows():
         for col, value in data.items():
             if (idx, col) not in st.session_state['locked_cells'] and value.strip():
                 st.session_state['locked_cells'][(idx, col)] = value
 
-# Render the table with dynamic height and width
+# Create a copy of the table data and mark the locked cells
+locked_table_data = st.session_state['table_data'].copy()
+
+# Mark locked cells in the dataframe
+for (idx, col) in st.session_state['locked_cells'].keys():
+    locked_table_data.at[idx, col] = f"Locked: {st.session_state['locked_cells'][(idx, col)]}"
+
+# Render the table with dynamic height and width and mark the locked cells as read-only
 st.data_editor(
-    st.session_state['table_data'].to_dict(orient='records'),
-    column_config={col: {"disabled": True} for _, col in st.session_state['locked_cells'].keys()}
+    locked_table_data.to_dict(orient='records'),
+    disabled_columns={col: True for _, col in st.session_state['locked_cells'].keys()},
 )
 
 if st.button("Lock Table Values"):
