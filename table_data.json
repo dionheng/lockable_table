@@ -1,8 +1,66 @@
 {
   "table_data": [
-    {"Number": "1", "OMAT No.": "OMat 4-70", "Description": "Air Dry, Molybdenum Disulphide Dry Film Lubricant (1L)", "Quantity\n(Week 1)": "", "Quantity\n(Week 2)": "", "Quantity\n(Week 3)": "", "Quantity\n(Week 4)": ""},
-    {"Number": "2", "OMAT No.": "OMat 1001A", "Description": "Plus gas, Dry Film Lubricant (1L)", "Quantity\n(Week 1)": "", "Quantity\n(Week 2)": "", "Quantity\n(Week 3)": "", "Quantity\n(Week 4)": ""},
-    ...
+    {
+      "Number": "1",
+      "OMAT No.": "OMat 4-70",
+      "Description": "Air Dry, Molybdenum Disulphide Dry Film Lubricant (1L)",
+      "Minimum Stock Level\nMaximum Allowable\nVolume": "10 Bottles (0.125 litre/bottle)\n20 Bottles",
+      "Batch No.": "",
+      "Expiry Date\n(DD/MM/YYYY)": "",
+      "Quantity\n(Week 1)": "",
+      "Quantity\n(Week 2)": "",
+      "Quantity\n(Week 3)": "",
+      "Quantity\n(Week 4)": ""
+    },
+    {
+      "Number": "2",
+      "OMAT No.": "OMat 1001A",
+      "Description": "Plus gas, Dry Film Lubricant (1L)",
+      "Minimum Stock Level\nMaximum Allowable\nVolume": "",
+      "Batch No.": "",
+      "Expiry Date\n(DD/MM/YYYY)": "",
+      "Quantity\n(Week 1)": "",
+      "Quantity\n(Week 2)": "",
+      "Quantity\n(Week 3)": "",
+      "Quantity\n(Week 4)": ""
+    },
+    {
+      "Number": "3",
+      "OMAT No.": "OMat 4-51",
+      "Description": "Molykote D321R",
+      "Minimum Stock Level\nMaximum Allowable\nVolume": "",
+      "Batch No.": "",
+      "Expiry Date\n(DD/MM/YYYY)": "",
+      "Quantity\n(Week 1)": "",
+      "Quantity\n(Week 2)": "",
+      "Quantity\n(Week 3)": "",
+      "Quantity\n(Week 4)": ""
+    },
+    {
+      "Number": "4",
+      "OMAT No.": "OMat 8-121",
+      "Description": "Loctite 641 Bearing Fit",
+      "Minimum Stock Level\nMaximum Allowable\nVolume": "",
+      "Batch No.": "",
+      "Expiry Date\n(DD/MM/YYYY)": "",
+      "Quantity\n(Week 1)": "",
+      "Quantity\n(Week 2)": "",
+      "Quantity\n(Week 3)": "",
+      "Quantity\n(Week 4)": ""
+    },
+    {
+      "Number": "5",
+      "OMAT No.": "OMat 150",
+      "Description": "Acetone",
+      "Minimum Stock Level\nMaximum Allowable\nVolume": "",
+      "Batch No.": "",
+      "Expiry Date\n(DD/MM/YYYY)": "",
+      "Quantity\n(Week 1)": "",
+      "Quantity\n(Week 2)": "",
+      "Quantity\n(Week 3)": "",
+      "Quantity\n(Week 4)": ""
+    }
   ],
   "is_locked": false
 }
+
