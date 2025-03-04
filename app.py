@@ -3,7 +3,7 @@ import pandas as pd
 import json
 import os
 
-st.title("Lockable Table")
+st.title("Fan Blade Cell - Flammable Omats Weekly Checklist")
 
 # Define the path to the JSON file where the table data will be stored
 data_file_path = "table_data.json"
