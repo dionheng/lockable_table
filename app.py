@@ -15,14 +15,14 @@ if 'table_data' not in st.session_state:
     st.session_state['table_data'] = pd.DataFrame({
         'Number': ["1", "2", "3", "4", "5", "6", "7", "8", "9"],
         'OMAT No.': ["OMat 4-70", "OMat 1001A", "OMat 4-51", "OMat 8-121", "OMat 150", "OMat 4-43", "OMat 4/71", "OMat 4/74", "OMat 4/76"],
-        'Description': ["", "", "", "", "", "", "", "", ""],
-        'Minimum Stock Level Maximum Allowable Volume': ["", "", "", "", "", "", "", "", ""],
+        'Description': ["Air Dry, Molybdenum\nDisulphide\nDry Film Lubricant (1L)", "Plus gas, Dry Film Lubricant (1L)\nEnamel (1L)", "Molykote\nD321R", "Loctite 641\nBearing Fit", "Acetone", "Molydisulphide\nDry Film Lubricant", "Rapid Re-lube Kit T700", "Rapid Re-lube Kit T800", "Rapid Re-lube Kit T800"],
+        'Minimum Stock Level\nMaximum Allowable\nVolume': ["10 Bottles (0.125 litre/bottle)\n20 Bottles", "", "", "", "", "", "", "", ""],
         'Batch No.': ["", "", "", "", "", "", "", "", ""],
-        'Expiry Date (DD/MM/YYYY)': ["", "", "", "", "", "", "", "", ""],
-        'Quantity (Week 1)': ["", "", "", "", "", "", "", "", ""],
-        'Quantity (Week 2)': ["", "", "", "", "", "", "", "", ""],
-        'Quantity (Week 3)': ["", "", "", "", "", "", "", "", ""],
-        'Quantity (Week 4)': ["", "", "", "", "", "", "", "", ""],
+        'Expiry Date\n(DD/MM/YYYY)': ["", "", "", "", "", "", "", "", ""],
+        'Quantity\n(Week 1)': ["", "", "", "", "", "", "", "", ""],
+        'Quantity\n(Week 2)': ["", "", "", "", "", "", "", "", ""],
+        'Quantity\n(Week 3)': ["", "", "", "", "", "", "", "", ""],
+        'Quantity\n(Week 4)': ["", "", "", "", "", "", "", "", ""],
     })
 
 if 'timestamps' not in st.session_state:
