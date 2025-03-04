@@ -95,7 +95,3 @@ if st.button("Submit"):
     else:
         st.warning("Please enter a valid Google Sheet URL")
 
-st.info("This app works well on mobile devices via the Streamlit web interface.")
-
-# Run with: streamlit run app.py
-# Let me know if you’d like me to refine anything or add new features! 🚀
