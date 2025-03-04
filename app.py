@@ -30,7 +30,8 @@ def lock_prefilled_cells():
             if (idx, col) not in st.session_state['locked_cells'] and value.strip():
                 st.session_state['locked_cells'][(idx, col)] = value
                 st.session_state['timestamps'][(idx, col)] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-
+# Lock pre-filled cells when the app starts
+lock_prefilled_cells()
 
 if 'timestamps' not in st.session_state:
     st.session_state['timestamps'] = {}
@@ -42,8 +43,7 @@ def lock_cells():
             st.session_state['locked_cells'][idx] = data.to_dict()
             st.session_state['timestamps'][idx] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
-# Lock pre-filled cells when the app starts
-lock_prefilled_cells()
+
 
 # Function to export locked table data to Google Sheets
 def export_to_google_sheets(sheet_url):
