@@ -28,7 +28,7 @@ def load_data():
             'Number': ["1", "2", "3", "4", "5", "6", "7", "8", "9"],
             'OMAT No.': ["OMat 4-70", "OMat 1001A", "OMat 4-51", "OMat 8-121", "OMat 150", "OMat 4-43", "OMat 4/71", "OMat 4/74", "OMat 4/76"],
             'Description': ["Air Dry, Molybdenum\nDisulphide\nDry Film Lubricant (1L)", "Plus gas, Dry Film Lubricant (1L)\nEnamel (1L)", "Molykote\nD321R", "Loctite 641\nBearing Fit", "Acetone", "Molydisulphide\nDry Film Lubricant", "Rapid Re-lube Kit T700", "Rapid Re-lube Kit T800", "Rapid Re-lube Kit T800"],
-            'Minimum Stock Level\nMaximum Allowable\nVolume': ["10 Bottles (0.125 litre/bottle)\n20 Bottles", "", "", "", "", "", "", "", ""],
+            'Minimum Stock Level\nMaximum Allowable\nVolume': ["10 Bottles (0.125 litre/bottle)/20 Bottles", "1 Can (0.125 litre/can)/ 1 Can", "10 Bottles (0.4 litre/can)/ 20 Bottles", "1 Bottle (3.5ml/bottle)/ 1 Bottle", "2 Bottles (5 litre/bottle)/ 20 Bottles", "05 Cans (1 litre/can)/ 20 Bottles", "1 Set/ 1 Set", "1 Set/ 1 Set", "1 Set/ 1 Set"],
             'Batch No.': ["", "", "", "", "", "", "", "", ""],
             'Expiry Date\n(DD/MM/YYYY)': ["", "", "", "", "", "", "", "", ""],
             'Quantity\n(Week 1)': ["", "", "", "", "", "", "", "", ""],
