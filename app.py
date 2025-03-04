@@ -64,7 +64,9 @@ def lock_cells():
 # Function to unlock the table
 def unlock_table():
     st.session_state['is_locked'] = False
-    st.session_state['locked_cells'] = {}  # Clear locked cells if needed
+    # Don’t clear the locked cells if you only want to unlock editing
+    st.info("Table unlocked! You can now edit the values again.")
+
 
 # Function to update table data
 def update_table_data(new_data):
