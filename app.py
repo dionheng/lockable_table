@@ -24,6 +24,13 @@ if 'table_data' not in st.session_state:
         'Quantity\n(Week 3)': ["", "", "", "", "", "", "", "", ""],
         'Quantity\n(Week 4)': ["", "", "", "", "", "", "", "", ""],
     })
+def lock_prefilled_cells():
+    for idx, data in st.session_state['table_data'].iterrows():
+        for col, value in data.items():
+            if (idx, col) not in st.session_state['locked_cells'] and value.strip():
+                st.session_state['locked_cells'][(idx, col)] = value
+                st.session_state['timestamps'][(idx, col)] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
 
 if 'timestamps' not in st.session_state:
     st.session_state['timestamps'] = {}
