@@ -16,7 +16,7 @@ if 'table_data' not in st.session_state:
         'Number': ["1", "2", "3", "4", "5", "6", "7", "8", "9"],
         'OMAT No.': ["OMat 4-70", "OMat 1001A", "OMat 4-51", "OMat 8-121", "OMat 150", "OMat 4-43", "OMat 4/71", "OMat 4/74", "OMat 4/76"],
         'Description': ["", "", "", "", "", "", "", "", ""],
-        'Minimum Stock Level Maximum Allowable Volume': ["", "", ""],
+        'Minimum Stock Level Maximum Allowable Volume': ["", "", "", "", "", "", "", "", ""],
         'Batch No.': ["", "", "", "", "", "", "", "", ""],
         'Expiry Date (DD/MM/YYYY)': ["", "", "", "", "", "", "", "", ""],
         'Quantity (Week 1)': ["", "", "", "", "", "", "", "", ""],
