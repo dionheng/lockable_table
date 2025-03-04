@@ -3,6 +3,8 @@ import pandas as pd
 import json
 import os
 
+print(os.getcwd())
+
 st.title("Lockable Table")
 
 # Define the path to the JSON file where the table data will be stored
@@ -91,4 +93,3 @@ if st.button("Lock Table Values"):
     st.session_state['is_locked'] = True  # Mark the table as locked
     st.success("Table values locked successfully! The values cannot be edited now.")
     save_data(st.session_state['table_data'])  # Save data after locking
-print(os.getcwd())
