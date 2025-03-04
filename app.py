@@ -68,11 +68,12 @@ def update_table_data(new_data):
 # Function to style locked cells as bold
 def style_locked_cells(df):
     styled_df = df.copy()
-    for idx, col in styled_df.iteritems():
-        for row_idx, value in col.items():
-            if (row_idx, idx) in st.session_state['locked_cells']:
-                styled_df.at[row_idx, idx] = f"**{value}**"
+    for col, col_data in df.items():  # Use items() instead of iteritems()
+        for row_idx, value in col_data.items():
+            if (row_idx, col) in st.session_state['locked_cells']:
+                styled_df.at[row_idx, col] = f"**{value}**"
     return styled_df
+
 
 # Load the table data when the app starts
 st.session_state['table_data'] = load_data()
