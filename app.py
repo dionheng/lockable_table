@@ -18,31 +18,37 @@ if 'is_locked' not in st.session_state:
 # Function to load data from JSON file
 def load_data():
     if os.path.exists(data_file_path):
-        try:
-            with open(data_file_path, "r") as file:
-                saved_data = json.load(file)
-                
-                # Load table data and locked cells separately
-                table_data = pd.DataFrame(saved_data)
-                st.session_state['locked_cells'] = saved_data.get("locked_cells", {})
-                return table_data
-        except json.JSONDecodeError:
-            st.warning("Corrupted JSON file. Loading default table.")
-    
-    # Load default data if the file is missing or corrupted
-    return pd.DataFrame({
-        'Number': ["1", "2", "3", "4", "5", "6", "7", "8", "9"],
-        'OMAT No.': ["OMat 4-70", "OMat 1001A", "OMat 4-51", "OMat 8-121", "OMat 150", "OMat 4-43", "OMat 4/71", "OMat 4/74", "OMat 4/76"],
-        'Description': ["Air Dry, Molybdenum Disulphide Dry Film Lubricant (1L)", "Plus gas, Dry Film Lubricant (1L)", "Molykote D321R", "Loctite 641", "Acetone", "Molydisulphide Lubricant", "Rapid Re-lube Kit T700", "Rapid Re-lube Kit T800", "Rapid Re-lube Kit T800"],
-        'Batch No.': ["", "", "", "", "", "", "", "", ""],
-        'Expiry Date': ["", "", "", "", "", "", "", "", ""],
-    })
+        with open(data_file_path, "r") as file:
+            saved_data = json.load(file)
+        # Load table data and locked cells
+        table_data = pd.DataFrame(saved_data.get("table_data", []))
+        st.session_state['locked_cells'] = saved_data.get("locked_cells", {})
+        return table_data
+    else:
+        # Default data if the file doesn't exist
+        return pd.DataFrame({
+            'Number': ["1", "2", "3", "4", "5", "6", "7", "8", "9"],
+            'OMAT No.': ["OMat 4-70", "OMat 1001A", "OMat 4-51", "OMat 8-121", "OMat 150", "OMat 4-43", "OMat 4/71", "OMat 4/74", "OMat 4/76"],
+            'Description': ["Air Dry, Molybdenum\nDisulphide\nDry Film Lubricant (1L)", "Plus gas, Dry Film Lubricant (1L)\nEnamel (1L)", "Molykote\nD321R", "Loctite 641\nBearing Fit", "Acetone", "Molydisulphide\nDry Film Lubricant", "Rapid Re-lube Kit T700", "Rapid Re-lube Kit T800", "Rapid Re-lube Kit T800"],
+            'Minimum Stock Level\nMaximum Allowable\nVolume': ["10 Bottles (0.125 litre/bottle)/20 Bottles", "1 Can (0.125 litre/can)/ 1 Can", "10 Bottles (0.4 litre/can)/ 20 Bottles", "1 Bottle (3.5ml/bottle)/ 1 Bottle", "2 Bottles (5 litre/bottle)/ 20 Bottles", "05 Cans (1 litre/can)/ 20 Bottles", "1 Set/ 1 Set", "1 Set/ 1 Set", "1 Set/ 1 Set"],
+            'Batch No.': ["", "", "", "", "", "", "", "", ""],
+            'Expiry Date\n(DD/MM/YYYY)': ["", "", "", "", "", "", "", "", ""],
+            'Quantity\n(Week 1)': ["", "", "", "", "", "", "", "", ""],
+            'Quantity\n(Week 2)': ["", "", "", "", "", "", "", "", ""],
+            'Quantity\n(Week 3)': ["", "", "", "", "", "", "", "", ""],
+            'Quantity\n(Week 4)': ["", "", "", "", "", "", "", "", ""],
+        })
+
 
 
 # Function to save data and locked cells to JSON file
 def save_data(data):
+    save_payload = {
+        "table_data": data.to_dict(orient="records"),
+        "locked_cells": st.session_state.get('locked_cells', {})
+    }
     with open(data_file_path, "w") as file:
-      json.dump(data.to_dict(orient="records"), file)
+        json.dump(save_payload, file)
 
 
 
