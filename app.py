@@ -3,7 +3,6 @@ import pandas as pd
 import json
 import os
 
-print(os.getcwd())
 
 st.title("Lockable Table")
 
