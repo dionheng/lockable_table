@@ -3,9 +3,10 @@ import pandas as pd
 import json
 import os
 
+
 st.title("Lockable Table")
 
-# Define the path to the JSON file where the table data and locked state will be stored
+# Define the path to the JSON file where the table data will be stored
 data_file_path = "table_data.json"
 
 # Initialize session state if not already
@@ -20,13 +21,10 @@ def load_data():
     if os.path.exists(data_file_path):
         with open(data_file_path, "r") as file:
             data = json.load(file)
-        # Return both table data and locked state
-        table_data = pd.DataFrame(data['table_data'])
-        is_locked = data['is_locked']
-        return table_data, is_locked
+        return pd.DataFrame(data)
     else:
         # Default data if the file doesn't exist
-        default_data = pd.DataFrame({
+        return pd.DataFrame({
             'Number': ["1", "2", "3", "4", "5", "6", "7", "8", "9"],
             'OMAT No.': ["OMat 4-70", "OMat 1001A", "OMat 4-51", "OMat 8-121", "OMat 150", "OMat 4-43", "OMat 4/71", "OMat 4/74", "OMat 4/76"],
             'Description': ["Air Dry, Molybdenum\nDisulphide\nDry Film Lubricant (1L)", "Plus gas, Dry Film Lubricant (1L)\nEnamel (1L)", "Molykote\nD321R", "Loctite 641\nBearing Fit", "Acetone", "Molydisulphide\nDry Film Lubricant", "Rapid Re-lube Kit T700", "Rapid Re-lube Kit T800", "Rapid Re-lube Kit T800"],
@@ -38,19 +36,14 @@ def load_data():
             'Quantity\n(Week 3)': ["", "", "", "", "", "", "", "", ""],
             'Quantity\n(Week 4)': ["", "", "", "", "", "", "", "", ""],
         })
-        return default_data, False
 
 # Function to save data to JSON file
-def save_data(table_data, is_locked):
-    data_to_save = {
-        'table_data': table_data.to_dict(orient="records"),
-        'is_locked': is_locked
-    }
+def save_data(data):
     with open(data_file_path, "w") as file:
-        json.dump(data_to_save, file)
+        json.dump(data.to_dict(orient="records"), file)
 
-# Load the table data and locked state when the app starts
-st.session_state['table_data'], st.session_state['is_locked'] = load_data()
+# Load the table data when the app starts
+st.session_state['table_data'] = load_data()
 
 # Function to lock pre-filled cells
 def lock_prefilled_cells():
@@ -87,7 +80,7 @@ if not st.session_state['is_locked']:
     # Update the table data in session state when edited
     if edited_data is not None:
         update_table_data(edited_data)
-        save_data(st.session_state['table_data'], st.session_state['is_locked'])  # Save updated data to file
+        save_data(st.session_state['table_data'])  # Save updated data to file
 
 else:
     # If the table is locked, display it as read-only (no editing allowed)
@@ -98,4 +91,4 @@ if st.button("Lock Table Values"):
     lock_cells()  # Lock the cells
     st.session_state['is_locked'] = True  # Mark the table as locked
     st.success("Table values locked successfully! The values cannot be edited now.")
-    save_data(st.session_state['table_data'], st.session_state['is_locked'])  # Save data after locking
+    save_data(st.session_state['table_data'])  # Save data after locking
