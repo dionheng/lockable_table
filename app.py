@@ -1,11 +1,12 @@
 import streamlit as st
 import pandas as pd
+import json
 import os
 
 st.title("Lockable Table")
 
-# Define the path to the CSV file where the table data will be stored
-data_file_path = "table_data.csv"
+# Define the path to the JSON file where the table data will be stored
+data_file_path = "table_data.json"
 
 # Initialize session state if not already
 if 'locked_cells' not in st.session_state:
@@ -14,10 +15,12 @@ if 'locked_cells' not in st.session_state:
 if 'is_locked' not in st.session_state:
     st.session_state['is_locked'] = False
 
-# Function to load data from CSV file
+# Function to load data from JSON file
 def load_data():
     if os.path.exists(data_file_path):
-        return pd.read_csv(data_file_path)
+        with open(data_file_path, "r") as file:
+            data = json.load(file)
+        return pd.DataFrame(data)
     else:
         # Default data if the file doesn't exist
         return pd.DataFrame({
@@ -33,9 +36,10 @@ def load_data():
             'Quantity\n(Week 4)': ["", "", "", "", "", "", "", "", ""],
         })
 
-# Function to save data to CSV file
+# Function to save data to JSON file
 def save_data(data):
-    data.to_csv(data_file_path, index=False)
+    with open(data_file_path, "w") as file:
+        json.dump(data.to_dict(orient="records"), file)
 
 # Load the table data when the app starts
 st.session_state['table_data'] = load_data()
