@@ -1,17 +1,11 @@
-import os
-import json
 import streamlit as st
 import pandas as pd
 from io import BytesIO
 from datetime import datetime
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
-from dotenv import load_dotenv
 
 st.title("Lockable Table with Google Sheets Export")
-
-# Load environment variables from .env file (if you have it)
-load_dotenv()
 
 # Initialize session state if not already
 if 'locked_cells' not in st.session_state:
@@ -35,6 +29,7 @@ if 'timestamps' not in st.session_state:
     st.session_state['timestamps'] = {}
 
 # Function to lock pre-filled cells
+
 def lock_prefilled_cells():
     for idx, data in st.session_state['table_data'].iterrows():
         for col, value in data.items():
@@ -54,32 +49,13 @@ def lock_cells():
                 st.session_state['timestamps'][(idx, col)] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
 # Function to export locked table data to Google Sheets
-def export_to_google_sheets():
+def export_to_google_sheets(sheet_url):
     try:
-        # Retrieve the Google Sheets credentials from the environment variable
-        service_account_json = os.getenv('GOOGLE_SHEET_CREDENTIALS')
-
-        # Check if the environment variable is set
-        if service_account_json is None:
-            raise ValueError("The GOOGLE_SHEET_CREDENTIALS environment variable is not set.")
-
-        # Parse the JSON string into a dictionary
-        credentials_dict = json.loads(service_account_json)
-
-        # Define the Google Sheets scope
         scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
-
-        # Use the credentials dictionary to create the credentials object
-        creds = ServiceAccountCredentials.from_json_keyfile_dict(credentials_dict, scope)
-
-        # Authorize gspread client with credentials
+        creds = ServiceAccountCredentials.from_json_keyfile_name("service_account.json", scope)
         client = gspread.authorize(creds)
         
-        # Hardcoded Google Sheets key
-        sheet_key = "1aBcDeFgHiJkLmNoPqRsTUVwXyz1234567"  # Replace with your actual Google Sheets key
-        
-        # Open the sheet by key
-        sheet = client.open_by_key(sheet_key).sheet1
+        sheet = client.open_by_url(sheet_url).sheet1
         
         # Clear existing data and write new data
         sheet.clear()
@@ -101,19 +77,20 @@ def export_to_google_sheets():
         st.error(f"Failed to export data to Google Sheets: {e}")
 
 # Render the table with dynamic height and width
-table_data = st.session_state['table_data'].copy()
-for (idx, col), value in st.session_state['locked_cells'].items():
-    # Mark locked cells (for display)
-    if value.strip():
-        table_data.at[idx, col] = f"LOCKED: {value}"
-
-# Render the editable table
-edited_data = st.data_editor(
-    table_data.to_dict(orient='records'),
-    height=350,
+st.data_editor(
+    st.session_state['table_data'].to_dict(orient='records'),
+    column_config={
+        col: {"disabled": True} for _, col in st.session_state['locked_cells'].keys()
+    }
 )
 
-# Automatically submit to Google Sheets
-if st.button("Export to Google Sheets"):
+
+# Google Sheet URL input
+google_sheet_url = st.text_input("Enter your Google Sheet URL")
+
+if st.button("Submit"):
     lock_cells()
-    export_to_google_sheets()
+    if google_sheet_url.strip():
+        export_to_google_sheets(google_sheet_url)
+    else:
+        st.warning("Please enter a valid Google Sheet URL")
