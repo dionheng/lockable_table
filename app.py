@@ -64,8 +64,6 @@ st.data_editor(
     use_container_width=True  # Dynamic width
 )
 
-st.session_state['table_data'] = edited_df
-
 # Google Sheet URL input
 google_sheet_url = st.text_input("Enter your Google Sheet URL")
 
