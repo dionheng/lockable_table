@@ -78,8 +78,10 @@ def export_to_google_sheets(sheet_url):
 
 # Render the table with dynamic height and width
 st.data_editor(
-    st.session_state['table_data'].to_dict(orient='records'),  
-    disabled=[(idx, col) for (idx, col) in st.session_state['locked_cells'].keys()]
+    st.session_state['table_data'].to_dict(orient='records'),
+    column_config={
+        col: {"disabled": True} for _, col in st.session_state['locked_cells'].keys()
+    }
 )
 
 
