@@ -3,7 +3,7 @@ import pandas as pd
 import json
 import os
 
-st.title("Lockable Table with Visual Indicators")
+st.title("Lockable Table")
 
 # Define the path to the JSON file where the table data will be stored
 data_file_path = "table_data.json"
@@ -19,11 +19,8 @@ if 'is_locked' not in st.session_state:
 def load_data():
     if os.path.exists(data_file_path):
         with open(data_file_path, "r") as file:
-            saved_data = json.load(file)
-        # Load table data and locked cells
-        table_data = pd.DataFrame(saved_data.get("table_data", []))
-        st.session_state['locked_cells'] = saved_data.get("locked_cells", {})
-        return table_data
+            data = json.load(file)
+        return pd.DataFrame(data)
     else:
         # Default data if the file doesn't exist
         return pd.DataFrame({
@@ -39,18 +36,10 @@ def load_data():
             'Quantity\n(Week 4)': ["", "", "", "", "", "", "", "", ""],
         })
 
-
-
-# Function to save data and locked cells to JSON file
+# Function to save data to JSON file
 def save_data(data):
-    save_payload = {
-        "table_data": data.to_dict(orient="records"),
-        "locked_cells": st.session_state.get('locked_cells', {})
-    }
     with open(data_file_path, "w") as file:
-        json.dump(save_payload, file)
-
-
+        json.dump(data.to_dict(orient="records"), file)
 
 # Load the table data when the app starts
 st.session_state['table_data'] = load_data()
@@ -62,23 +51,21 @@ def lock_prefilled_cells():
             if (idx, col) not in st.session_state['locked_cells'] and value.strip():
                 st.session_state['locked_cells'][(idx, col)] = value
 
-# Lock pre-filled cells on page load
+# Lock pre-filled cells when the app starts
 lock_prefilled_cells()
 
-# Function to style locked cells
-def highlight_locked(val, row, col):
-    if (row, col) in st.session_state['locked_cells']:
-        return 'background-color: lightgray; color: gray;'
-    return ''
+# Function to lock cells
+def lock_cells():
+    for idx, data in st.session_state['table_data'].iterrows():
+        for col, value in data.items():
+            if (idx, col) not in st.session_state['locked_cells'] and value.strip():
+                st.session_state['locked_cells'][(idx, col)] = value
 
-
-# Function to render the styled DataFrame
-def render_styled_table(df):
-    styled_df = df.style.apply(
-        lambda row: [highlight_locked(val, row.name, col) for col, val in row.items()],
-        axis=1
-    )
-    st.dataframe(styled_df)
+# Function to unlock the table
+def unlock_table():
+    st.session_state['is_locked'] = False
+    # Don’t clear the locked cells if you only want to unlock editing
+    st.info("Table unlocked! You can now edit the values again.")
 
 
 # Function to update table data
@@ -87,45 +74,31 @@ def update_table_data(new_data):
         for col, value in record.items():
             st.session_state['table_data'].at[idx, col] = value
 
+# Create a copy of the table data and mark the locked cells
+locked_table_data = st.session_state['table_data'].copy()
 
 # Render the table
 if not st.session_state['is_locked']:
-    # Editable table if unlocked
+    # If the table is not locked, render it as editable
     edited_data = st.data_editor(
-        st.session_state['table_data'].to_dict(orient='records'),
-        disabled=[st.session_state['locked_cells'].get((i, col)) is not None for i in range(len(st.session_state['table_data'])) for col in st.session_state['table_data'].columns]
+        locked_table_data.to_dict(orient='records'),
     )
-    
-    # Update and save data on edit
+    # Update the table data in session state when edited
     if edited_data is not None:
         update_table_data(edited_data)
-        save_data(st.session_state['table_data'])
+        save_data(st.session_state['table_data'])  # Save updated data to file
 else:
-    # Read-only view if locked
-    render_styled_table(st.session_state['table_data'])
-
+    # If the table is locked, display it as read-only (no editing allowed)
+    st.dataframe(locked_table_data)  # This will display a static table (read-only)
 
 # Button to lock the table values
 if st.button("Lock Table Values"):
-    lock_prefilled_cells()
-    st.session_state['is_locked'] = True
+    lock_cells()  # Lock the cells
+    st.session_state['is_locked'] = True  # Mark the table as locked
     st.success("Table values locked successfully! The values cannot be edited now.")
-    save_data(st.session_state['table_data'])
+    save_data(st.session_state['table_data'])  # Save data after locking
 
 # Button to unlock the table
 if st.button("Unlock Table Values"):
-    st.session_state['is_locked'] = False
+    unlock_table()
     st.success("Table unlocked! You can now edit the values again.")
-
-    # Refresh the lock status without clearing locked cells
-    save_data(st.session_state['table_data'])
-
-
-st.info("Filled cells are automatically locked on page refresh, and locked cells are grayed out.")
-
-# Debug view
-if st.checkbox("Show Locked Cells (Debug)"):
-    st.write(st.session_state['locked_cells'])
-
-
-# 🚀 Let me know if you want me to refine anything else! 🚀
