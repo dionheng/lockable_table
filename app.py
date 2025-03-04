@@ -29,7 +29,6 @@ if 'timestamps' not in st.session_state:
     st.session_state['timestamps'] = {}
 
 # Function to lock pre-filled cells
-
 def lock_prefilled_cells():
     for idx, data in st.session_state['table_data'].iterrows():
         for col, value in data.items():
@@ -49,13 +48,17 @@ def lock_cells():
                 st.session_state['timestamps'][(idx, col)] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
 # Function to export locked table data to Google Sheets
-def export_to_google_sheets(sheet_url):
+def export_to_google_sheets():
     try:
         scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
         creds = ServiceAccountCredentials.from_json_keyfile_name("service_account.json", scope)
         client = gspread.authorize(creds)
         
-        sheet = client.open_by_url(sheet_url).sheet1
+        # Hardcoded Google Sheets key
+        sheet_key = "1Kgn-4RaT4V_WsJmw7RLyghJhowS9E7peqNGeLFMWp3I"  
+        
+        # Open the sheet by key
+        sheet = client.open_by_key(sheet_key).sheet1
         
         # Clear existing data and write new data
         sheet.clear()
@@ -77,21 +80,19 @@ def export_to_google_sheets(sheet_url):
         st.error(f"Failed to export data to Google Sheets: {e}")
 
 # Render the table with dynamic height and width
-st.data_editor(
-    st.session_state['table_data'].to_dict(orient='records'),
-    column_config={
-        col: {"disabled": True} for _, col in st.session_state['locked_cells'].keys()
-    }
+table_data = st.session_state['table_data'].copy()
+for (idx, col), value in st.session_state['locked_cells'].items():
+    # Mark locked cells (for display)
+    if value.strip():
+        table_data.at[idx, col] = f"LOCKED: {value}"
+
+# Render the editable table
+edited_data = st.data_editor(
+    table_data.to_dict(orient='records'),
+    height=350,
 )
 
-
-# Google Sheet URL input
-google_sheet_url = st.text_input("Enter your Google Sheet URL")
-
-if st.button("Submit"):
+# Automatically submit to Google Sheets
+if st.button("Export to Google Sheets"):
     lock_cells()
-    if google_sheet_url.strip():
-        export_to_google_sheets(google_sheet_url)
-    else:
-        st.warning("Please enter a valid Google Sheet URL")
-
+    export_to_google_sheets()
