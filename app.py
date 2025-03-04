@@ -1,11 +1,17 @@
+import os
+import json
 import streamlit as st
 import pandas as pd
 from io import BytesIO
 from datetime import datetime
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
+from dotenv import load_dotenv
 
 st.title("Lockable Table with Google Sheets Export")
+
+# Load environment variables from .env file (if you have it)
+load_dotenv()
 
 # Initialize session state if not already
 if 'locked_cells' not in st.session_state:
@@ -50,12 +56,27 @@ def lock_cells():
 # Function to export locked table data to Google Sheets
 def export_to_google_sheets():
     try:
+        # Retrieve the Google Sheets credentials from the environment variable
+        service_account_json = os.getenv('GOOGLE_SHEET_CREDENTIALS')
+
+        # Check if the environment variable is set
+        if service_account_json is None:
+            raise ValueError("The GOOGLE_SHEET_CREDENTIALS environment variable is not set.")
+
+        # Parse the JSON string into a dictionary
+        credentials_dict = json.loads(service_account_json)
+
+        # Define the Google Sheets scope
         scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
-        creds = ServiceAccountCredentials.from_json_keyfile_name("service_account.json", scope)
+
+        # Use the credentials dictionary to create the credentials object
+        creds = ServiceAccountCredentials.from_json_keyfile_dict(credentials_dict, scope)
+
+        # Authorize gspread client with credentials
         client = gspread.authorize(creds)
         
         # Hardcoded Google Sheets key
-        sheet_key = "1Kgn-4RaT4V_WsJmw7RLyghJhowS9E7peqNGeLFMWp3I"  
+        sheet_key = "1aBcDeFgHiJkLmNoPqRsTUVwXyz1234567"  # Replace with your actual Google Sheets key
         
         # Open the sheet by key
         sheet = client.open_by_key(sheet_key).sheet1
