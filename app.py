@@ -5,7 +5,7 @@ from datetime import datetime
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 
-st.title("Fan Blade Cell - Flammable Omats Weekly Checklist")
+st.title("Lockable Table with Google Sheets Export")
 
 # Initialize session state if not already
 if 'locked_cells' not in st.session_state:
@@ -24,26 +24,29 @@ if 'table_data' not in st.session_state:
         'Quantity\n(Week 3)': ["", "", "", "", "", "", "", "", ""],
         'Quantity\n(Week 4)': ["", "", "", "", "", "", "", "", ""],
     })
+
+if 'timestamps' not in st.session_state:
+    st.session_state['timestamps'] = {}
+
+# Function to lock pre-filled cells
+
 def lock_prefilled_cells():
     for idx, data in st.session_state['table_data'].iterrows():
         for col, value in data.items():
             if (idx, col) not in st.session_state['locked_cells'] and value.strip():
                 st.session_state['locked_cells'][(idx, col)] = value
                 st.session_state['timestamps'][(idx, col)] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
 # Lock pre-filled cells when the app starts
 lock_prefilled_cells()
-
-if 'timestamps' not in st.session_state:
-    st.session_state['timestamps'] = {}
 
 # Function to lock cells and timestamp
 def lock_cells():
     for idx, data in st.session_state['table_data'].iterrows():
-        if idx not in st.session_state['locked_cells']:
-            st.session_state['locked_cells'][idx] = data.to_dict()
-            st.session_state['timestamps'][idx] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-
-
+        for col, value in data.items():
+            if (idx, col) not in st.session_state['locked_cells'] and value.strip():
+                st.session_state['locked_cells'][(idx, col)] = value
+                st.session_state['timestamps'][(idx, col)] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
 # Function to export locked table data to Google Sheets
 def export_to_google_sheets(sheet_url):
@@ -56,11 +59,18 @@ def export_to_google_sheets(sheet_url):
         
         # Clear existing data and write new data
         sheet.clear()
-        data = pd.DataFrame.from_dict(st.session_state['locked_cells'], orient='index')
-        data['Timestamp'] = [st.session_state['timestamps'].get(idx, '') for idx in data.index]
+        locked_data = {}
+        
+        for (idx, col), value in st.session_state['locked_cells'].items():
+            if idx not in locked_data:
+                locked_data[idx] = {}
+            locked_data[idx][col] = value
+            locked_data[idx]['Timestamp'] = st.session_state['timestamps'].get((idx, col), '')
+        
+        data = pd.DataFrame.from_dict(locked_data, orient='index')
         
         # Convert DataFrame to list of lists and update the sheet
-        sheet.update([data.columns.values.tolist()] + data.values.tolist())
+        sheet.update([data.columns.values.tolist()] + data.fillna(" ").values.tolist())
         
         st.success("Data exported to Google Sheets successfully!")
     except Exception as e:
@@ -68,8 +78,8 @@ def export_to_google_sheets(sheet_url):
 
 # Render the table with dynamic height and width
 st.data_editor(
-    st.session_state['table_data'].to_dict(orient='records'), 
-    disabled=list(st.session_state['locked_cells'].keys()),
+    st.session_state['table_data'].to_dict(orient='records'),  # Convert to list of records
+    disabled=[(idx, col) for (idx, col) in st.session_state['locked_cells'].keys()],
     height=(len(st.session_state['table_data']) * 35) + 50,  # Dynamic height
     use_container_width=True  # Dynamic width
 )
