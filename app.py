@@ -58,7 +58,7 @@ def export_to_google_sheets(sheet_url):
 
 # Render the table with dynamic height and width
 st.data_editor(
-    st.session_state['table_data'].reset_index(drop=True), 
+    st.session_state['table_data'].to_dict(orient='records'), 
     disabled=list(st.session_state['locked_cells'].keys()),
     height=(len(st.session_state['table_data']) * 35) + 50,  # Dynamic height
     use_container_width=True  # Dynamic width
